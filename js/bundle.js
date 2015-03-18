@@ -199,7 +199,7 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 	}
 	
 	$scope.showUpdate=function(){
-		return angular.isDefined($scope.activeBrewery);
+		return angular.isDefined($scope.activebeer);
 	};
 	
 	$scope.refreshOnAsk=function(){
@@ -210,15 +210,15 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 		return config.beers.update == 'deffered';
 	};
 	
-	$scope.setActive=function(brewery){
-		if(brewery!==$scope.activeBrewery)
-			$scope.activeBrewery=brewery;
+	$scope.setActive=function(beer){
+		if(beer!==$scope.activebeer)
+			$scope.activebeer=beer;
 		else
-			$scope.activeBrewery=undefined;
+			$scope.activebeer=undefined;
 	};
 	
-	$scope.isActive=function(brewery){
-		return brewery==$scope.activeBrewery;
+	$scope.isActive=function(beer){
+		return beer==$scope.activebeer;
 	};
 	
 	$scope.hasMessage=function(){
@@ -253,29 +253,29 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 		});
 	};
 	
-	$scope.edit=function(brewery){
-		if(angular.isDefined(brewery))
-			$scope.activeBrewery=brewery;
-		config.activeBrewery=angular.copy($scope.activeBrewery);
-		config.activeBrewery.reference=$scope.activeBrewery;
+	$scope.edit=function(beer){
+		if(angular.isDefined(beer))
+			$scope.activebeer=beer;
+		config.activebeer=angular.copy($scope.activebeer);
+		config.activebeer.reference=$scope.activebeer;
 		$location.path("beers/update");
 	}
 	
-	$scope.update=function(brewery,force,callback){
-		if(angular.isUndefined(brewery)){
-			brewery=$scope.activeBrewery;
+	$scope.update=function(beer,force,callback){
+		if(angular.isUndefined(beer)){
+			beer=$scope.activebeer;
 		}
-		$scope.data.posted={ "brewery" : {
-		    "name" : brewery.name,
-		    "url"  : brewery.url
+		$scope.data.posted={ "beer" : {
+		    "name" : beer.name,
+		    "description"  : beer.description
 		  }
 		};
-		$scope.data.beers.push(brewery);
-		brewery.created_at=new Date();
+		$scope.data.beers.push(beer);
+		beer.created_at=new Date();
 			if(config.beers.update==="immediate" || force){
-				rest.post($scope.data,"beers",brewery.name,callback);
+				rest.post($scope.data,"beers",beer.name,callback);
 			}else{
-				save.addOperation("New",$scope.update,brewery);
+				save.addOperation("New",$scope.update,beer);
 				$location.path("beers");
 			}
 	}
@@ -288,13 +288,13 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 		});
 		return true;
 	};
-	$scope.removeOne=function(brewery,force,callback){
+	$scope.removeOne=function(beer,force,callback){
 		if(config.beers.update==="immediate" || force){
-			brewery.deleted=true;
-			rest.remove(brewery,"beers",callback);
+			beer.deleted=true;
+			rest.remove(beer,"beers",callback);
 		}else{
-			save.addOperation("Deleted",$scope.removeOne,brewery);
-			brewery.deleted=$scope.hideDeleted;
+			save.addOperation("Deleted",$scope.removeOne,beer);
+			beer.deleted=$scope.hideDeleted;
 		}
 	}
 };
@@ -306,10 +306,10 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 	var self=this;
 	var selfScope=$scope;
 	$scope.setFormScope=function(form){
-		$scope.frmBrewery=form;
+		$scope.frmbeer=form;
 	};
 	var onRouteChangeOff=$scope.$on('$locationChangeStart', function routeChange(event, newUrl, oldUrl) {
-		if (!$scope.frmBrewery || !$scope.frmBrewery.$dirty || $scope.exit) return;
+		if (!$scope.frmbeer || !$scope.frmbeer.$dirty || $scope.exit) return;
 
 		var alert = modalService.showModal("Sortie","<b>Attention</b>, si vous continuez, vous perdez les modifications en cours.<br>Enregistrer avant sortie ?",function(value){
 				selfScope.exit=true;
@@ -329,38 +329,38 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 		return;
 	});
 	
-	$scope.update=function(brewery,force,callback){
-		if($scope._update(brewery,force,callback)==true){
+	$scope.update=function(beer,force,callback){
+		if($scope._update(beer,force,callback)==true){
 			$location.path("beers");
 		}
 	};
-	$scope._update=function(brewery,force,callback){
+	$scope._update=function(beer,force,callback){
 		var result=false;
-		if(angular.isUndefined(brewery)){
-			brewery=$scope.activeBrewery;
+		if(angular.isUndefined(beer)){
+			beer=$scope.activebeer;
 		}
-		$scope.data.posted={ "brewery" : {
-			"name" : brewery.name,
-			"url"  : brewery.url
+		$scope.data.posted={ "beer" : {
+			"name" : beer.name,
+			"description"  : Beer.description
 			}
 		};
-		$scope.data.beers.push(brewery);
-		brewery.created_at=new Date();
+		$scope.data.beers.push(beer);
+		beer.created_at=new Date();
 		if(config.beers.update==="immediate" || force){
-			rest.post($scope.data,"beers",brewery.name,callback);
+			rest.post($scope.data,"beers",beer.name,callback);
 		}else{
-			save.addOperation("New",$scope.update,brewery);
+			save.addOperation("New",$scope.update,beer);
 			result=true;
 		}
 		return result;
 	}
 };
 },{}],9:[function(require,module,exports){
-module.exports=function($scope,config,$location,rest,save,$document,modalService, $controller){
+module.exports=function($scope,config,$location,rest,save,$document,modalService,$controller){
 	$controller('BeerAddController', {$scope: $scope});
 
 	if(angular.isUndefined(config.activeBeer)){
-		$location.path("beers/");
+		$location.path("beers/update");
 	}
 	$scope.activeBeer=config.activeBeer;
 	
@@ -375,12 +375,12 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 			}
 			$scope.data.posted={ "Beer" : {
 			    "name" : Beer.name,
-			    "url"  : Beer.url
+			    "description"  : Beer.description
 			  }
 			};
 			
 			config.activeBeer.reference.name=$scope.activeBeer.name;
-			config.activeBeer.reference.url=$scope.activeBeer.url;
+			config.activeBeer.reference.description=$scope.activeBeer.description;
 			config.activeBeer.reference.updated_at=new Date();
 			
 			if(config.beers.update==="immediate" || force)
@@ -663,7 +663,7 @@ module.exports=function($routeProvider,$locationProvider,$httpProvider) {
 			controller: 'BeersAddController'
 		}).when('/beers/update', {
 			templateUrl: 'templates/beers/beerForm.html',
-			controller: 'BeersAddController'
+			controller: 'BeerUpdateController'
 		}).when('/saves', {
 			templateUrl: 'templates/saveMain.html',
 			controller: 'SaveController'

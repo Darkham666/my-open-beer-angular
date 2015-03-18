@@ -29,7 +29,7 @@ module.exports=function($routeProvider,$locationProvider,$httpProvider) {
 			controller: 'BeersAddController'
 		}).when('/beers/update', {
 			templateUrl: 'templates/beers/beerForm.html',
-			controller: 'BeersAddController'
+			controller: 'BeerUpdateController'
 		}).when('/saves', {
 			templateUrl: 'templates/saveMain.html',
 			controller: 'SaveController'

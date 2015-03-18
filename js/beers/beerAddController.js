@@ -5,10 +5,10 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 	var self=this;
 	var selfScope=$scope;
 	$scope.setFormScope=function(form){
-		$scope.frmBrewery=form;
+		$scope.frmbeer=form;
 	};
 	var onRouteChangeOff=$scope.$on('$locationChangeStart', function routeChange(event, newUrl, oldUrl) {
-		if (!$scope.frmBrewery || !$scope.frmBrewery.$dirty || $scope.exit) return;
+		if (!$scope.frmbeer || !$scope.frmbeer.$dirty || $scope.exit) return;
 
 		var alert = modalService.showModal("Sortie","<b>Attention</b>, si vous continuez, vous perdez les modifications en cours.<br>Enregistrer avant sortie ?",function(value){
 				selfScope.exit=true;
@@ -28,27 +28,27 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 		return;
 	});
 	
-	$scope.update=function(brewery,force,callback){
-		if($scope._update(brewery,force,callback)==true){
+	$scope.update=function(beer,force,callback){
+		if($scope._update(beer,force,callback)==true){
 			$location.path("beers");
 		}
 	};
-	$scope._update=function(brewery,force,callback){
+	$scope._update=function(beer,force,callback){
 		var result=false;
-		if(angular.isUndefined(brewery)){
-			brewery=$scope.activeBrewery;
+		if(angular.isUndefined(beer)){
+			beer=$scope.activebeer;
 		}
-		$scope.data.posted={ "brewery" : {
-			"name" : brewery.name,
-			"url"  : brewery.url
+		$scope.data.posted={ "beer" : {
+			"name" : beer.name,
+			"description"  : beer.description
 			}
 		};
-		$scope.data.beers.push(brewery);
-		brewery.created_at=new Date();
+		$scope.data.beers.push(beer);
+		beer.created_at=new Date();
 		if(config.beers.update==="immediate" || force){
-			rest.post($scope.data,"beers",brewery.name,callback);
+			rest.post($scope.data,"beers",beer.name,callback);
 		}else{
-			save.addOperation("New",$scope.update,brewery);
+			save.addOperation("New",$scope.update,beer);
 			result=true;
 		}
 		return result;

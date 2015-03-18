@@ -1,8 +1,8 @@
-module.exports=function($scope,config,$location,rest,save,$document,modalService, $controller){
+module.exports=function($scope,config,$location,rest,save,$document,modalService,$controller){
 	$controller('BeerAddController', {$scope: $scope});
 
 	if(angular.isUndefined(config.activeBeer)){
-		$location.path("beers/");
+		$location.path("beers/update");
 	}
 	$scope.activeBeer=config.activeBeer;
 	
@@ -17,12 +17,12 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 			}
 			$scope.data.posted={ "Beer" : {
 			    "name" : Beer.name,
-			    "url"  : Beer.url
+			    "description"  : Beer.description
 			  }
 			};
 			
 			config.activeBeer.reference.name=$scope.activeBeer.name;
-			config.activeBeer.reference.url=$scope.activeBeer.url;
+			config.activeBeer.reference.description=$scope.activeBeer.description;
 			config.activeBeer.reference.updated_at=new Date();
 			
 			if(config.beers.update==="immediate" || force)
