@@ -1,32 +1,35 @@
-module.exports=function($scope,config,$location,rest,save,$document,modalService,$controller){
+module.exports=function($scope,config,$location,rest,save,$document,modalService, $controller) {
 	$controller('BeerAddController', {$scope: $scope});
 
 	if(angular.isUndefined(config.activeBeer)){
-		$location.path("beers/update");
+		$location.path("beers/");
 	}
 	$scope.activeBeer=config.activeBeer;
 	
-	$scope._update=function(Beer,force,callback){
+	$scope._update=function(beer,force,callback){
 		var result=false;
-		if($scope.frmBeer.$dirty){
-			if(angular.isUndefined(Beer)){
-				Beer=$scope.activeBeer;
+		if(force || $scope.frmBeer.$dirty){
+			if(angular.isUndefined(beer)){
+				beer=$scope.activeBeer;
 			}else{
-				config.activeBeer=angular.copy(Beer);
-				config.activeBeer.reference=Beer;
+				config.activeBeer=angular.copy(beer);
+				config.activeBeer.reference = beer;
 			}
-			$scope.data.posted={ "Beer" : {
-			    "name" : Beer.name,
-			    "description"  : Beer.description
-			  }
+			$scope.data.posted={
+			    "name" : beer.name,
+			    "description"  : beer.description,
+			    "abv" : beer.abv,
+			    "idBrewery" : beer.idBrewery
 			};
 			
 			config.activeBeer.reference.name=$scope.activeBeer.name;
-			config.activeBeer.reference.description=$scope.activeBeer.description;
+			config.activeBeer.reference.description = $scope.activeBeer.description;
+			config.activeBeer.reference.abv = $scope.activeBeer.abv;
+			config.activeBeer.reference.idBrewery = $scope.activeBeer.idBrewery;
 			config.activeBeer.reference.updated_at=new Date();
-			
-			if(config.beers.update==="immediate" || force)
+			if(config.beers.update==="immediate" || force){
 				rest.put(config.activeBeer.id,$scope.data,"beers",config.activeBeer.name,callback);
+			}
 			else{
 				config.activeBeer.reference.flag="Updated";
 				save.addOperation("Updated",$scope.update,config.activeBeer.reference);
@@ -37,4 +40,4 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 		}
 		return result;
 	}
-};
+}

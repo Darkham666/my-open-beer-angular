@@ -25,7 +25,7 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 	}
 	
 	$scope.showUpdate=function(){
-		return angular.isDefined($scope.activebeer);
+		return angular.isDefined($scope.activeBeer);
 	};
 	
 	$scope.refreshOnAsk=function(){
@@ -37,14 +37,14 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 	};
 	
 	$scope.setActive=function(beer){
-		if(beer!==$scope.activebeer)
-			$scope.activebeer=beer;
+		if(beer!==$scope.activeBeer)
+			$scope.activeBeer=beer;
 		else
-			$scope.activebeer=undefined;
+			$scope.activeBeer=undefined;
 	};
 	
 	$scope.isActive=function(beer){
-		return beer==$scope.activebeer;
+		return beer==$scope.activeBeer;
 	};
 	
 	$scope.hasMessage=function(){
@@ -81,19 +81,21 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 	
 	$scope.edit=function(beer){
 		if(angular.isDefined(beer))
-			$scope.activebeer=beer;
-		config.activebeer=angular.copy($scope.activebeer);
-		config.activebeer.reference=$scope.activebeer;
+			$scope.activeBeer=beer;
+		config.activeBeer=angular.copy($scope.activeBeer);
+		config.activeBeer.reference=$scope.activeBeer;
 		$location.path("beers/update");
 	}
 	
 	$scope.update=function(beer,force,callback){
 		if(angular.isUndefined(beer)){
-			beer=$scope.activebeer;
+			beer=$scope.activeBeer;
 		}
 		$scope.data.posted={ "beer" : {
 		    "name" : beer.name,
-		    "description"  : beer.description
+		    "description"  : beer.description,
+		    "abv" : beer.abv,
+			"idBrewery" : beer.idBrewery
 		  }
 		};
 		$scope.data.beers.push(beer);
@@ -122,5 +124,5 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 			save.addOperation("Deleted",$scope.removeOne,beer);
 			beer.deleted=$scope.hideDeleted;
 		}
-	}
-};
+	};
+}
