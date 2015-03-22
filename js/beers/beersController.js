@@ -125,4 +125,12 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 			beer.deleted=$scope.hideDeleted;
 		}
 	};
+
+	$scope.view=function(beer){
+		if(angular.isDefined(beer))
+			$scope.activeBeer=beer;
+		config.activeBeer=angular.copy($scope.activeBeer);
+		config.activeBeer.reference=$scope.activeBeer;
+		$location.path("beers/details");
+	};
 }

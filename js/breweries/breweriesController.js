@@ -114,6 +114,7 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 		});
 		return true;
 	};
+
 	$scope.removeOne=function(brewery,force,callback){
 		if(config.breweries.update==="immediate" || force){
 			brewery.deleted=true;
@@ -122,5 +123,14 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 			save.addOperation("Deleted",$scope.removeOne,brewery);
 			brewery.deleted=$scope.hideDeleted;
 		}
+	};
+
+	$scope.view=function(brewery){
+		if(angular.isDefined(brewery))
+			$scope.activeBrewery=brewery;
+		config.activeBrewery=angular.copy($scope.activeBrewery);
+		config.activeBrewery.reference=$scope.activeBrewery;
+		$location.path("breweries/details");
 	}
-};
+
+}

@@ -18,6 +18,9 @@ module.exports=function($routeProvider,$locationProvider,$httpProvider) {
 		}).when('/breweries/update', {
 			templateUrl: 'templates/breweries/breweryForm.html',
 			controller: 'BreweryUpdateController'
+		}).when('/breweries/details', {
+			templateUrl: 'templates/breweries/breweryDetails.html',
+			controller: 'BreweryViewController'
 		}).when('/beers', {
 			templateUrl: 'templates/beers/main.html',
 			controller: 'BeersController'
@@ -30,6 +33,9 @@ module.exports=function($routeProvider,$locationProvider,$httpProvider) {
 		}).when('/beers/update', {
 			templateUrl: 'templates/beers/beerForm.html',
 			controller: 'BeerUpdateController'
+		}).when('/beers/details', {
+			templateUrl: 'templates/beers/beerDetails.html',
+			controller: 'BeerViewController'
 		}).when('/saves', {
 			templateUrl: 'templates/saveMain.html',
 			controller: 'SaveController'
