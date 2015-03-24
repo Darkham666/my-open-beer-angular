@@ -31,7 +31,7 @@ module.exports=function($scope,$location,save,$window, user) {
 	};
 
 	$scope.disconnect = function(){
-		user.deconnect();
+		user.disconnect();
 		$scope.user = user.info;
 		$scope.Email = "";
 		$location.path("/");
