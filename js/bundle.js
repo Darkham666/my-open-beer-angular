@@ -311,6 +311,10 @@ module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 }
 },{}],8:[function(require,module,exports){
 module.exports = function($scope,config,$location,rest,save,$document,modalService) {
+	if(config.server.privateToken == ""){
+		$location.path("401");
+	}
+
 	$scope.data={};
 	$scope.localData = {};//data à ne pas mettre a jour
 	$scope.data["beers"]=config.beers.all;
@@ -370,8 +374,11 @@ module.exports = function($scope,config,$location,rest,save,$document,modalServi
 }
 },{}],9:[function(require,module,exports){
 module.exports=function($scope,config,$location,rest,save,$document,modalService, $controller) {
-	$controller('BeerAddController', {$scope: $scope});
+	if(config.server.privateToken == ""){
+		$location.path("401");
+	}
 
+	$controller('BeerAddController', {$scope: $scope});
 	if(angular.isUndefined(config.activeBeer)){
 		$location.path("beers/");
 	}
@@ -622,7 +629,9 @@ controller("BreweryViewController",["$scope","config","$location","rest",require
 module.exports=angular.module("BreweriesApp").name;
 },{"./BreweryViewController":12,"./breweriesController":13,"./breweryAddController":15,"./breweryUpdateController":16}],15:[function(require,module,exports){
 module.exports=function($scope,config,$location,rest,save,$document,modalService) {
-	
+	if(config.server.privateToken == ""){
+		$location.path("401");
+	}
 	$scope.data={};
 	$scope.data["breweries"]=config.breweries.all;
 	var self=this;
@@ -678,6 +687,10 @@ module.exports=function($scope,config,$location,rest,save,$document,modalService
 };
 },{}],16:[function(require,module,exports){
 module.exports=function($scope,config,$location,rest,save,$document,modalService, $controller){
+	if(config.server.privateToken == ""){
+		$location.path("401");
+	}
+
 	$controller('BreweryAddController', {$scope: $scope});
 
 	if(angular.isUndefined(config.activeBrewery)){
@@ -761,6 +774,8 @@ module.exports=function($routeProvider,$locationProvider,$httpProvider) {
 		}).when('/config', {
 			templateUrl: 'templates/config.html',
 			controller: 'ConfigController'
+		}).when('/401', {
+			templateUrl: 'templates/errors/401.html',
 		}).otherwise({
 			redirectTo: '/'
 		});
@@ -795,6 +810,10 @@ module.exports=function() {
 	factory.breweries.loaded=false;
 	factory.breweries.refresh="all";//all|ask
 	factory.breweries.update="immediate";//deffered|immediate
+	factory.activeBeer=undefined;
+	factory.beers.loaded=false;
+	factory.beers.refresh="all";//all|ask
+	factory.beers.update="immediate";//deffered|immediate
 	factory.server.privateToken="";
 	factory.server.restServerUrl="http://127.0.0.1/Projects/rest-open-beer/";
 	factory.server.force=false;
@@ -1081,7 +1100,7 @@ module.exports=function($resource,$location,config,rest) {
 	};
 
 	this.disconnect = function() {
-		this.info.ok.connected = false;
+		this.info.connected = false;
 		this.info.ok.mail = "Unidentified";
 		this.info.ok.password = "";
 		this.info.ok.token = "";

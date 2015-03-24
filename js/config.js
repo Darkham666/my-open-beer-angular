@@ -42,6 +42,8 @@ module.exports=function($routeProvider,$locationProvider,$httpProvider) {
 		}).when('/config', {
 			templateUrl: 'templates/config.html',
 			controller: 'ConfigController'
+		}).when('/401', {
+			templateUrl: 'templates/errors/401.html',
 		}).otherwise({
 			redirectTo: '/'
 		});

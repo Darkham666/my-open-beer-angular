@@ -1,4 +1,8 @@
 module.exports=function($scope,config,$location,rest,save,$document,modalService, $controller){
+	if(config.server.privateToken == ""){
+		$location.path("401");
+	}
+
 	$controller('BreweryAddController', {$scope: $scope});
 
 	if(angular.isUndefined(config.activeBrewery)){
