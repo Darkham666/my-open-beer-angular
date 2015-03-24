@@ -7,14 +7,14 @@ module.exports=function($scope,config,$location,rest, modalService, $document) {
 
 	$scope.activeBrewery=config.activeBrewery;
 	
-	var biere = "beers/brewery/" + config.activeBrewery.id;
-	rest.getAll($scope.data, biere);
+	var beers = "beers/brewery/" + config.activeBrewery.id;
+	rest.getAll($scope.data, beers);
 
 	$scope.countBeers = function(){
-		if($scope.data[biere] == undefined)
+		if($scope.data[beers] == undefined)
 			return 0;
 		else{	
-			return $scope.data[biere].length;
+			return $scope.data[beers].length;
 		}
 	};
 

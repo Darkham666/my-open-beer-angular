@@ -30,6 +30,29 @@
 			</div>
 		</div>
 	</div>
+	<nav class="navbar navbar-default">
+			<div class="collapse navbar-collapse">
+				<form class="navbar-form navbar-right" ng-show="user.setting">
+		        	<div class="input-group">
+						<span class="input-group-addon">E-mail : </span>
+						<input ng-model="Email" type="text" class="form-control" placeholder="admin@local.fr">
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Password : </span>
+						<input ng-model="user.password" type="password" class="form-control">
+					</div>
+		        	<button class="btn btn-default" ng-click="connect()">Login</button>
+		      	</form>
+			    <ul class="nav navbar-nav navbar-right">
+					<li>
+						<a>{{user.mail}}</a>
+					</li>
+					<li>
+						<a class="btn btn-default" ng-click="user.connected == true ? disconnect() : user.setting == false ? user.setting = true : user.setting = false">{{user.connected == true ? "Disconnect" : "Connexion"}}</a>
+					</li>
+			    </ul>
+			</div>
+	</nav>
 	<div class="container">
 		<ol class="breadcrumb">
 				<li><a href="home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;Home</a></li>

@@ -138,8 +138,9 @@ module.exports=function(){
 };
 },{}],6:[function(require,module,exports){
 angular.module("mainApp",["ngRoute","ngResource","ngAnimate",require("./breweries/breweriesModule"),require("./beers/beersModule"),require("./config/configModule")]).
-controller("MainController", ["$scope","$location","save","$window",require("./mainController")]).
+controller("MainController", ["$scope","$location","save","$window", "user",require("./mainController")]).
 controller("SaveController", ["$scope","$location","save",require("./save/saveController")]).
+service("user", ["$resource","$location","config","rest",require("./services/user")]).
 service("rest", ["$http","$resource","$location","config",require("./services/rest")]).
 service("save", ["rest","config","$route",require("./services/save")]).
 config(["$routeProvider","$locationProvider","$httpProvider",require("./config")]).
@@ -171,7 +172,7 @@ run(['$rootScope','$location', '$routeParams', function($rootScope, $location, $
 }]
 ).factory("config", require("./config/configFactory"));
 
-},{"./addons/drag":1,"./addons/modal":2,"./addons/modalService":3,"./addons/notDeletedFilter":4,"./addons/sortBy":5,"./beers/beersModule":11,"./breweries/breweriesModule":14,"./config":17,"./config/configFactory":19,"./config/configModule":20,"./mainController":21,"./save/saveController":22,"./services/rest":23,"./services/save":24}],7:[function(require,module,exports){
+},{"./addons/drag":1,"./addons/modal":2,"./addons/modalService":3,"./addons/notDeletedFilter":4,"./addons/sortBy":5,"./beers/beersModule":11,"./breweries/breweriesModule":14,"./config":17,"./config/configFactory":19,"./config/configModule":20,"./mainController":21,"./save/saveController":22,"./services/rest":23,"./services/save":24,"./services/user":25}],7:[function(require,module,exports){
 module.exports=function($scope,rest,$timeout,$location,config,$route,save) {
 	$scope.data={load:false};
 
@@ -456,14 +457,14 @@ module.exports=function($scope,config,$location,rest, modalService, $document) {
 
 	$scope.activeBrewery=config.activeBrewery;
 	
-	var biere = "beers/brewery/" + config.activeBrewery.id;
-	rest.getAll($scope.data, biere);
+	var beers = "beers/brewery/" + config.activeBrewery.id;
+	rest.getAll($scope.data, beers);
 
 	$scope.countBeers = function(){
-		if($scope.data[biere] == undefined)
+		if($scope.data[beers] == undefined)
 			return 0;
 		else{	
-			return $scope.data[biere].length;
+			return $scope.data[beers].length;
 		}
 	};
 
@@ -804,8 +805,11 @@ var configApp=angular.module("ConfigApp", []).
 controller("ConfigController", ["$scope","config","$location",require("./configController")]);
 module.exports=configApp.name;
 },{"./configController":18}],21:[function(require,module,exports){
-module.exports=function($scope,$location,save,$window) {
+module.exports=function($scope,$location,save,$window, user) {
 	
+	$scope.user = angular.copy(user.info);
+	$scope.Email = "";
+
 	$scope.hasOperations=function(){
 		return save.operations.length>0;
 	};
@@ -825,6 +829,20 @@ module.exports=function($scope,$location,save,$window) {
 		$window.removeEventListener('beforeunload', beforeUnload);
 	});
 	
+	$scope.connect = function(){
+		user.info.posted.mail = $scope.Email;
+		user.info.posted.password = $scope.user.password;
+		user.getToken();
+		$scope.user = user.info;
+		$location.path("/");
+	};
+
+	$scope.disconnect = function(){
+		user.deconnect();
+		$scope.user = user.info;
+		$scope.Email = "";
+		$location.path("/");
+	};
 };
 },{}],22:[function(require,module,exports){
 module.exports=function($scope,$location,save){
@@ -877,7 +895,8 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 	}
 	this.headers={ 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
 	    	'Accept': 'application/json'
-	    	};
+	};
+
 	this.getAll=function(response,what){
 		var request = $http({
 		    method: "GET",
@@ -895,6 +914,7 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 			console.log("Erreur de connexion au serveur, statut de la réponse : "+status);
 		});
 	};
+
 	this.addMessage=function(message){
 		content=$sce.trustAsHtml(message.content);
 		self.messages.push({"type":message.type,"content":content});
@@ -921,6 +941,24 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 			}
 		}).error(function(data, status, headers, config){
 			self.addMessage({type: "warning", content:"Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
+		});
+	};
+
+	this.connect=function(response,callback){
+		var request = $http({
+		    method: "POST",
+		    url: restConfig.server.restServerUrl+"user/connect",
+		    data: $.param(response.posted),
+		    headers: self.headers
+		});
+		request.success(function(data, status, headers, config) {
+			console.log(data);
+			response["ok"] = data;
+			if(angular.isDefined(callback)){
+				callback();
+			}
+		}).error(function(data, status, headers, config){
+			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
 		});
 	};
 	
@@ -956,12 +994,11 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 		    headers: self.headers
 		});
 		request.success(function(data, status, headers, config) {
-			self.addMessage(data.message);
 			if(angular.isDefined(callback)){
 				callback();
 			}
 		}).error(function(data, status, headers, config){
-			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
+			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"});
 		});
 	};
 	
@@ -1011,5 +1048,42 @@ module.exports=function(rest,config,$route){
 			$route.reload();
 		}
 	}
+};
+},{}],25:[function(require,module,exports){
+module.exports=function($resource,$location,config,rest) {
+	var self = this;
+
+	this.info = {
+		mail : "",
+		password : "",
+		connected : "false",
+		token : "",
+		posted : {
+			mail : "",
+			password : ""
+		}
+	};
+
+	this.getToken = function() {
+		rest.connect(this.info, function() {
+			if (self.info.ok.connected) {
+
+				self.info.connected = self.info.receive.connected;
+				self.info.mail = self.info.posted.mail;
+				self.info.password = self.info.posted.password;
+				self.info.token = self.info.ok.token;
+			}
+		});
+	};
+
+	this.disconnect = function() {
+		this.info.ok.connected = false;
+		this.info.ok.mail = "";
+		this.info.ok.password = "";
+		this.info.ok.token = "";
+		this.information.posted.mail = "";
+		this.information.posted.password = "";
+	};
+
 };
 },{}]},{},[6]);

@@ -1,7 +1,7 @@
-module.exports=function($scope,$location,save,$window) {
+module.exports=function($scope,$location,save,$window, user) {
 	
-	$scope.user = angular.copy(user.information);
-	$scope.mail = "";
+	$scope.user = angular.copy(user.info);
+	$scope.Email = "";
 
 	$scope.hasOperations=function(){
 		return save.operations.length>0;
@@ -23,17 +23,17 @@ module.exports=function($scope,$location,save,$window) {
 	});
 	
 	$scope.connect = function(){
-		user.information.posted.mail = $scope.mail;
-		user.information.posted.password = $scope.user.password;
+		user.info.posted.mail = $scope.Email;
+		user.info.posted.password = $scope.user.password;
 		user.getToken();
-		$scope.user = user.information;
+		$scope.user = user.info;
 		$location.path("/");
 	};
 
 	$scope.disconnect = function(){
 		user.deconnect();
-		$scope.user = user.information;
-		$scope.mail = "";
+		$scope.user = user.info;
+		$scope.Email = "";
 		$location.path("/");
 	};
 };

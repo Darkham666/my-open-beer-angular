@@ -65,13 +65,13 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 		    headers: self.headers
 		});
 		request.success(function(data, status, headers, config) {
-			self.addMessage(data.message);
-			response["receive"] = data;
+			console.log(data);
+			response["ok"] = data;
 			if(angular.isDefined(callback)){
 				callback();
 			}
 		}).error(function(data, status, headers, config){
-			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
+			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"});
 		});
 	};
 	
@@ -107,12 +107,11 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 		    headers: self.headers
 		});
 		request.success(function(data, status, headers, config) {
-			self.addMessage(data.message);
 			if(angular.isDefined(callback)){
 				callback();
 			}
 		}).error(function(data, status, headers, config){
-			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
+			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"});
 		});
 	};
 	
