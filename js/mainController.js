@@ -1,5 +1,8 @@
 module.exports=function($scope,$location,save,$window) {
 	
+	$scope.user = angular.copy(user.information);
+	$scope.mail = "";
+
 	$scope.hasOperations=function(){
 		return save.operations.length>0;
 	};
@@ -19,4 +22,18 @@ module.exports=function($scope,$location,save,$window) {
 		$window.removeEventListener('beforeunload', beforeUnload);
 	});
 	
+	$scope.connect = function(){
+		user.information.posted.mail = $scope.mail;
+		user.information.posted.password = $scope.user.password;
+		user.getToken();
+		$scope.user = user.information;
+		$location.path("/");
+	};
+
+	$scope.disconnect = function(){
+		user.deconnect();
+		$scope.user = user.information;
+		$scope.mail = "";
+		$location.path("/");
+	};
 };

@@ -8,7 +8,8 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 	}
 	this.headers={ 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
 	    	'Accept': 'application/json'
-	    	};
+	};
+
 	this.getAll=function(response,what){
 		var request = $http({
 		    method: "GET",
@@ -26,6 +27,7 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 			console.log("Erreur de connexion au serveur, statut de la réponse : "+status);
 		});
 	};
+
 	this.addMessage=function(message){
 		content=$sce.trustAsHtml(message.content);
 		self.messages.push({"type":message.type,"content":content});
@@ -52,6 +54,24 @@ module.exports=function($http,$resource,$location,restConfig,$sce) {
 			}
 		}).error(function(data, status, headers, config){
 			self.addMessage({type: "warning", content:"Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
+		});
+	};
+
+	this.connect=function(response,callback){
+		var request = $http({
+		    method: "POST",
+		    url: restConfig.server.restServerUrl+"user/connect",
+		    data: $.param(response.posted),
+		    headers: self.headers
+		});
+		request.success(function(data, status, headers, config) {
+			self.addMessage(data.message);
+			response["receive"] = data;
+			if(angular.isDefined(callback)){
+				callback();
+			}
+		}).error(function(data, status, headers, config){
+			self.addMessage({type: "warning", content: "Erreur de connexion au serveur, statut de la réponse : "+status+"<br>"+data.message});
 		});
 	};
 	
